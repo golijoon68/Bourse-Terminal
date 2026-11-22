@@ -238,7 +238,7 @@ const MTOMAN=1e7;  // ریال → میلیون تومان
 
 /* ---------- تنظیمات ---------- */
 const CFG=Object.assign(
-  {proxy:'',capital:100,risk:1,feeB:0.37,feeS:0.88,minVal:3,minScore:70,alert:true,demo:false},
+  {proxy:'https://arvan.golijoon68.workers.dev',capital:100,risk:1,feeB:0.37,feeS:0.88,minVal:3,minScore:70,alert:true,demo:false},
   (()=>{try{return JSON.parse(ls.get('bcfg'))||{}}catch(e){return{}}})()
 );
 const saveCfg=()=>ls.set('bcfg',JSON.stringify(CFG));
