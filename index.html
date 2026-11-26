@@ -347,6 +347,7 @@ function apiUrl(kind,arg){
   const px=(CFG.proxy||'').trim().replace(/\/+$/,''),B='https://cdn.tsetmc.com/api';
   if(px){
     if(kind==='mw')return px+'/mw';
+    if(kind==='map')return px+'/mw';
     if(kind==='cl')return px+'/clients';
     if(kind==='ov')return px+'/overview';
     if(kind==='ir')return px+'/iran';
@@ -354,6 +355,7 @@ function apiUrl(kind,arg){
     return px+'/hist?code='+arg+'&n=160';
   }
   if(kind==='mw')return B+'/ClosingPrice/GetMarketWatch?'+MWQS;
+  if(kind==='map')return B+'/ClosingPrice/GetMarketMap?market=0&size=1360&sector=0&typeSelected=1&hEven=0';
   if(kind==='cl')return B+'/ClientType/GetClientTypeAll';
   if(kind==='ov')return B+'/MarketData/GetMarketOverview/1';
   if(kind==='bl')return B+'/BestLimits/'+arg;
@@ -466,7 +468,8 @@ const kindLbl=k=>k==='etf_lev'?'اهرمی':k==='etf_gold'?'طلا':'سهام';
 
 function pickRows(d){
   if(Array.isArray(d))return d;if(!d||typeof d!=='object')return[];
-  for(const k of['marketwatch','marketWatch','data','result','items'])if(Array.isArray(d[k]))return d[k];
+  for(const k of['marketwatch','marketWatch','marketMap','data','result','items'])if(Array.isArray(d[k]))return d[k];
+  for(const k in d)if(Array.isArray(d[k])&&d[k].length)return d[k];
   return[];
 }
 
@@ -483,9 +486,11 @@ function parseMW(d){
     const r=rows[i],code=String(r.insCode||'').trim();if(!code)continue;
     const sym=normFa(r.lVal18AFC||r.symbol||''),name=normFa(r.lVal30||'');
     const kind=classifyAsset(sym,name);if(!kind)continue;
-    const last=num(r.pDrCotVal)||num(r.pClosing),yest=num(r.priceYesterday)||num(r.pReferenceVal);
+    const last=num(r.pDrCotVal)||num(r.pClosing),close=num(r.pClosing)||last;
+    const pCh=num(r.percent)||num(r.priceChangePercent);
+    let yest=num(r.priceYesterday)||num(r.pReferenceVal);
+    if(!(yest>0)&&last>0)yest=(pCh>-90&&pCh<90)?Math.round(last/(1+pCh/100)):close;
     if(!(last>0&&yest>0))continue;
-    const close=num(r.pClosing)||last;
     const maxL=num(r.psGelStaMax)||Math.round(yest*(kind==='etf_lev'?1.06:1.03));
     const minL=num(r.psGelStaMin)||Math.round(yest*(kind==='etf_lev'?.94:.97));
     const blRows=(blMap[code]||[]).slice().sort((a,b)=>(+a.number||0)-(+b.number||0));
@@ -765,7 +770,20 @@ let busy=false,histBusy=false,sel=null,errMsg='';
 const pick=new Set((()=>{try{return JSON.parse(ls.get('gxwatch'))||[]}catch(e){return[]}})());
 const watchSave=()=>ls.set('gxwatch',JSON.stringify([...pick]));
 
-async function fetchMW(){if(CFG.demo){demoJitter();return parseMW({marketwatch:DEMO.mw,bestLimits:DEMO.bl})}return parseMW(await J(apiUrl('mw')))}
+let MW_SRC='—';
+async function fetchMW(){
+  if(CFG.demo){MW_SRC='demo';demoJitter();return parseMW({marketwatch:DEMO.mw,bestLimits:DEMO.bl})}
+  const px=(CFG.proxy||'').trim();
+  if(!px){
+    try{
+      const dm=await J(apiUrl('map'),0),pm=parseMW(dm);
+      if(pm.length){MW_SRC='GetMarketMap (مستقیم)';return pm}
+    }catch(e){}
+  }
+  const dw=await J(apiUrl('mw'),0),pw=parseMW(dw);
+  MW_SRC=px?'Worker /mw':'GetMarketWatch (مستقیم)';
+  return pw;
+}
 async function fetchCL(){if(CFG.demo){CLI=parseCL({clientTypeAllDto:Object.values(DEMO.cl)});return}if(Date.now()-lastCl<22000&&Object.keys(CLI).length)return;try{CLI=parseCL(await J(apiUrl('cl')));lastCl=Date.now()}catch(e){}}
 async function fetchHist(code){if(CFG.demo){if(!DEMO)DEMO=demoBuild();return DEMO.hist[code]||[]}return parseHist(await J(apiUrl('hist',code)))}
 async function fetchExtras(){
@@ -778,6 +796,18 @@ async function fetchExtras(){
   });
 }
 async function ensureHist(code){
+  const S=ST.find(x=>x.code===code);
+  if(S&&!S.hasBL&&!CFG.demo){
+    J(apiUrl('bl',code),0).then(d=>{
+      const arr=(d&&(d.bestLimits||d.bestLimit))||(Array.isArray(d)?d:[]);
+      if(!arr.length)return;
+      S.bl5=arr.slice(0,5).sort((a,b)=>(+a.number||0)-(+b.number||0));
+      let bv=0,sv=0;S.bl5.forEach(b=>{const w=OB_W[+b.number||1]||.25;bv+=num(b.pMeDem)*num(b.qTitMeDem)*w;sv+=num(b.pMeOf)*num(b.qTitMeOf)*w});
+      S.obBuyVal=bv;S.obSellVal=sv;S.obRatio=(bv+sv)>0?bv/(bv+sv):.5;S.hasBL=true;
+      const b1=S.bl5[0]||{};S.bd={p:num(b1.pMeDem),q:num(b1.qTitMeDem),n:num(b1.zOrdMeDem)};S.bs={p:num(b1.pMeOf),q:num(b1.qTitMeOf),n:num(b1.zOrdMeOf)};
+      analyzeAll();
+    }).catch(()=>{});
+  }
   const h=HIST[code];if(h&&h.rows.length&&Date.now()-h.t<6*36e5)return;
   try{HIST[code]={t:Date.now(),rows:(await fetchHist(code)).slice(-160)};analyzeAll()}
   catch(e){HIST[code]={t:Date.now(),rows:[],fail:true}}
@@ -1236,9 +1266,9 @@ $('diagBtn').addEventListener('click',async()=>{
       const w=await J(px+'/diag',0);
       out+='Worker: '+(w.ok?'سالم ✅':'ناموفق ❌')+' ('+(w.host||'—')+' / '+(w.source||'')+') | ردیف: '+fa(w.rows||0)+' | حقیقی/حقوقی: '+fa(w.clients||0)+' | ۵سطر: '+fa(w.bestLimits||0)+(w.error?' | خطا: '+w.error:'');
     }
-    const d=await J(apiUrl('mw'),0),p=parseMW(d);
+    const p=await fetchMW();await fetchCL();
     const stC=p.filter(x=>x.kind==='stock').length,lvC=p.filter(x=>x.kind==='etf_lev').length,gdC=p.filter(x=>x.kind==='etf_gold').length;
-    el.textContent=out+' || پارس‌شده: '+fa(stC)+' سهام، '+fa(lvC)+' اهرمی، '+fa(gdC)+' صندوق طلا';
+    el.textContent=out+'منبع: '+MW_SRC+' | پارس‌شده: '+fa(stC)+' سهام، '+fa(lvC)+' اهرمی، '+fa(gdC)+' طلا | حقیقی/حقوقی: '+fa(Object.keys(CLI).length);
   }catch(e){el.textContent='خطا: '+((e&&e.message)||e)}
 });
 $('retryBtn').addEventListener('click',()=>refresh(true));
