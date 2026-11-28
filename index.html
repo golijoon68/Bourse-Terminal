@@ -294,7 +294,7 @@ const IB_URL='https://online.ibtrader.ir/dashboard/stock/basic';
 
 /* ---------- تنظیمات ---------- */
 const CFG=Object.assign(
-  {proxy:'https://arvan.golijoon68.workers.dev',capital:100,risk:1,feeStock:1.25,feeEtf:0.24,minVal:4,minScore:68,alert:true,demo:false},
+  {proxy:'',capital:100,risk:1,feeStock:1.25,feeEtf:0.24,minVal:4,minScore:68,alert:true,demo:false},
   (()=>{try{return JSON.parse(ls.get('gxcfg'))||{}}catch(e){return{}}})()
 );
 const saveCfg=()=>ls.set('gxcfg',JSON.stringify(CFG));
@@ -474,51 +474,64 @@ function pickRows(d){
 }
 
 function parseMW(d){
-  const rows=pickRows(d);PST={rows:rows.length};
+  const rows=pickRows(d);
+  PST={rows:rows.length};
   const blMap={};
   const blList=(d&&(d.bestLimits||d.bestLimit))||[];
   for(let i=0;i<blList.length;i++){
-    const b=blList[i],c=String(b.insCode||'');if(!c)continue;
+    const b=blList[i],c=String(b.insCode||'');
+    if(!c)continue;
     (blMap[c]||(blMap[c]=[])).push(b);
   }
   const out=[];
   for(let i=0;i<rows.length;i++){
-    const r=rows[i],code=String(r.insCode||'').trim();if(!code)continue;
-    const sym=normFa(r.lVal18AFC||r.symbol||''),name=normFa(r.lVal30||'');
-    const kind=classifyAsset(sym,name);if(!kind)continue;
-    const last=num(r.pDrCotVal)||num(r.pClosing),close=num(r.pClosing)||last;
+    const r=rows[i],code=String(r.insCode||'').trim();
+    if(!code)continue;
+    const sym=normFa(r.lVal18AFC||r.lva||r.symbol||''),name=normFa(r.lVal30||r.lvc||'');
+    const kind=classifyAsset(sym,name);
+    if(!kind)continue;
+    const last=num(r.pDrCotVal)||num(r.pdv)||num(r.pClosing)||num(r.pcl);
+    const close=num(r.pClosing)||num(r.pcl)||last;
     const pCh=num(r.percent)||num(r.priceChangePercent);
-    let yest=num(r.priceYesterday)||num(r.pReferenceVal);
+    let yest=num(r.priceYesterday)||num(r.py)||num(r.pReferenceVal);
     if(!(yest>0)&&last>0)yest=(pCh>-90&&pCh<90)?Math.round(last/(1+pCh/100)):close;
     if(!(last>0&&yest>0))continue;
-    const maxL=num(r.psGelStaMax)||Math.round(yest*(kind==='etf_lev'?1.06:1.03));
-    const minL=num(r.psGelStaMin)||Math.round(yest*(kind==='etf_lev'?.94:.97));
-    const blRows=(blMap[code]||[]).slice().sort((a,b)=>(+a.number||0)-(+b.number||0));
+    const maxL=num(r.psGelStaMax)||num(r.pMax)||Math.round(yest*(kind==='etf_lev'?1.06:1.03));
+    const minL=num(r.psGelStaMin)||num(r.pMin)||Math.round(yest*(kind==='etf_lev'?.94:.97));
+    const blSrc=(Array.isArray(r.blDs)&&r.blDs.length)
+      ? r.blDs.map((b,j)=>({number:+b.n||j+1,pMeDem:num(b.pmd),qTitMeDem:num(b.qmd),zOrdMeDem:num(b.zmd),pMeOf:num(b.pmo),qTitMeOf:num(b.qmo),zOrdMeOf:num(b.zmo)}))
+      : (blMap[code]||[]);
+    const blRows=blSrc.slice().sort((a,b)=>(+a.number||0)-(+b.number||0));
     let b1={},obBuyVal=0,obSellVal=0;
     for(let j=0;j<blRows.length;j++){
-      const b=blRows[j],lv=+b.number||1;if(lv===1)b1=b;
+      const b=blRows[j],lv=+b.number||1;
+      if(lv===1)b1=b;
       const w=OB_W[lv]||.25;
       obBuyVal+=num(b.pMeDem)*num(b.qTitMeDem)*w;
       obSellVal+=num(b.pMeOf)*num(b.qTitMeOf)*w;
     }
-    const vol=num(r.qTotTran5J),val=num(r.qTotCap),bVol=num(r.bVol);
+    const vol=num(r.qTotTran5J)||num(r.qtj),val=num(r.qTotCap)||num(r.qtc),bVol=num(r.bVol)||num(r.bv);
     const S={
-      code,sym,name,kind,last,close,yest,open:num(r.priceFirst)||yest,
-      hi:num(r.priceMax)||last,lo:num(r.priceMin)||last,
-      vol,val,cnt:num(r.zTotTran),bVol,maxL,minL,
+      code,sym,name,kind,last,close,yest,
+      open:num(r.priceFirst)||num(r.pf)||yest,
+      hi:num(r.priceMax)||num(r.pmx)||last,
+      lo:num(r.priceMin)||num(r.pmn)||last,
+      vol,val,cnt:num(r.zTotTran)||num(r.ztt),bVol,maxL,minL,
       bd:{p:num(b1.pMeDem),q:num(b1.qTitMeDem),n:num(b1.zOrdMeDem)},
       bs:{p:num(b1.pMeOf),q:num(b1.qTitMeOf),n:num(b1.zOrdMeOf)},
-      hasBL:blRows.length>0&&(b1.pMeDem!=null||b1.pMeOf!=null),
+      hasBL:blRows.length>0&&(num(b1.pMeDem)>0||num(b1.pMeOf)>0),
       bl5:blRows.slice(0,5),obBuyVal,obSellVal,
       obRatio:(obBuyVal+obSellVal)>0?obBuyVal/(obBuyVal+obSellVal):.5,
     };
-    S.pct=(last/yest-1)*100;S.closePct=(close/yest-1)*100;
+    S.pct=(last/yest-1)*100;
+    S.closePct=(close/yest-1)*100;
     S.gapPct=close>0?(last/close-1)*100:0;
     S.limPct=Math.max(.02,(maxL/yest)-1);
     S.bVolRatio=(kind==='stock'&&bVol>1)?vol/bVol:null;
     S.buyQ=S.hasBL&&S.bd.p>=maxL*.9995&&S.bs.q===0&&S.bd.q>0;
     S.sellQ=S.hasBL&&S.bs.p<=minL*1.0005&&S.bd.q===0&&S.bs.q>0;
-    S.nearMax=last>=maxL*.994;S.nearMin=last<=minL*1.006;
+    S.nearMax=last>=maxL*.994;
+    S.nearMin=last<=minL*1.006;
     out.push(S);
   }
   return out;
@@ -774,22 +787,28 @@ let MW_SRC='—';
 async function fetchMW(){
   if(CFG.demo){MW_SRC='demo';demoJitter();return parseMW({marketwatch:DEMO.mw,bestLimits:DEMO.bl})}
   const px=(CFG.proxy||'').trim();
-  if(!px){
-    try{
-      const dm=await J(apiUrl('map'),0),pm=parseMW(dm);
-      if(pm.length){MW_SRC='GetMarketMap (مستقیم)';return pm}
-    }catch(e){}
-  }
-  const dw=await J(apiUrl('mw'),0),pw=parseMW(dw);
-  MW_SRC=px?'Worker /mw':'GetMarketWatch (مستقیم)';
-  return pw;
+  try{
+    const dw=await J(apiUrl('mw'),0),pw=parseMW(dw);
+    if(pw.length){MW_SRC=px?'Worker /mw':'GetMarketWatch (مستقیم)';return pw}
+  }catch(e){if(px)throw e}
+  const dm=await J(apiUrl('map'),0),pm=parseMW(dm);
+  MW_SRC='GetMarketMap (مستقیم)';
+  return pm;
 }
-async function fetchCL(){if(CFG.demo){CLI=parseCL({clientTypeAllDto:Object.values(DEMO.cl)});return}if(Date.now()-lastCl<22000&&Object.keys(CLI).length)return;try{CLI=parseCL(await J(apiUrl('cl')));lastCl=Date.now()}catch(e){}}
-async function fetchHist(code){if(CFG.demo){if(!DEMO)DEMO=demoBuild();return DEMO.hist[code]||[]}return parseHist(await J(apiUrl('hist',code)))}
+async function fetchCL(){
+  if(CFG.demo){CLI=parseCL({clientTypeAllDto:Object.values(DEMO.cl)});return}
+  if(Date.now()-lastCl<22000&&Object.keys(CLI).length)return;
+  try{CLI=parseCL(await J(apiUrl('cl')));lastCl=Date.now()}catch(e){}
+}
+async function fetchHist(code){
+  if(CFG.demo){if(!DEMO)DEMO=demoBuild();return DEMO.hist[code]||[]}
+  return parseHist(await J(apiUrl('hist',code)));
+}
 async function fetchExtras(){
   if(CFG.demo){IR={usdt:294000,gold18:25475000};return}
-  const px=(CFG.proxy||'').trim();if(!px)return;
-  Promise.allSettled([J(apiUrl('ov'),0),J(apiUrl('ir'),0)]).then(([ov,ir])=>{
+  const px=(CFG.proxy||'').trim();
+  const irUrl=(px||'https://arvan.golijoon68.workers.dev').replace(/\/+$/,'')+'/iran';
+  Promise.allSettled([J(apiUrl('ov'),0),J(irUrl,0)]).then(([ov,ir])=>{
     if(ov.status==='fulfilled')OV=ov.value;
     if(ir.status==='fulfilled')IR=ir.value;
     renderMarket();
