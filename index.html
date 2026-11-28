@@ -107,6 +107,43 @@ footer{text-align:center;font-size:11px;color:var(--mute);margin-top:14px;line-h
 @media(max-width:940px){.g2,.main{grid-template-columns:1fr}canvas{height:240px}}
 @media(max-width:600px){#tbl{min-width:0}#tbl th:nth-child(5),#tbl td:nth-child(5),#tbl th:nth-child(6),#tbl td:nth-child(6){display:none}}
 @media(max-width:480px){body{padding:10px}h1{font-size:18px}.val{font-size:16px}.card{padding:11px}}
+  /* === GOLIX v1.1: هدر شیک، زنگوله هشدار و تنظیمات کشویی === */
+.ib-mini{display:inline-flex;align-items:center;gap:4px;padding:4px 9px;border-radius:999px;border:1px solid #14805f;background:rgba(11,42,34,.85);color:#a7f3d0;font-size:11px;font-weight:700;text-decoration:none;white-space:nowrap}
+.ib-mini:hover{filter:brightness(1.15)}
+.bell-btn{position:relative;display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:#121d38;color:#f1f5ff;font-size:15px;cursor:pointer;touch-action:manipulation}
+.bell-btn:hover{border-color:var(--accent)}
+.bell-btn.ring{animation:pulse .6s 2}
+.bell-cnt{position:absolute;top:-4px;left:-4px;min-width:17px;height:17px;padding:0 4px;border-radius:999px;background:#ef4444;color:#fff;font-size:10px;font-weight:800;display:none;align-items:center;justify-content:center;border:1.5px solid #070b14}
+.bell-cnt.on{display:inline-flex}
+.al-ov{position:fixed;inset:0;z-index:9998;background:rgba(3,6,14,.72);backdrop-filter:blur(4px);display:none;align-items:flex-start;justify-content:center;padding:54px 12px 16px}
+.al-ov.on{display:flex}
+.al-box{width:100%;max-width:520px;max-height:82vh;display:flex;flex-direction:column;background:#0d1426;border:1px solid var(--accent);border-radius:14px;box-shadow:0 12px 36px rgba(0,0,0,.65);overflow:hidden}
+.al-hd{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:11px 13px;border-bottom:1px solid var(--line);background:#101a33}
+.al-hd h3{font-size:13.5px;font-weight:800;display:flex;align-items:center;gap:6px}
+.al-list{padding:10px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.al-item{padding:9px 11px;border-radius:10px;border:1px solid var(--line);border-inline-start:3px solid var(--accent);background:rgba(15,23,42,.85);cursor:pointer;display:flex;flex-direction:column;gap:4px}
+.al-item.long{border-inline-start-color:var(--up)}.al-item.short{border-inline-start-color:var(--down)}.al-item.gold{border-inline-start-color:var(--gold)}
+.al-item.unread{background:rgba(23,48,106,.35)}
+.al-top{display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:12.5px}
+.al-body{font-size:11.5px;color:#dbe4fa;line-height:1.7;white-space:pre-line}
+.cfg-bar{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;padding:7px 11px;border-radius:10px;background:rgba(15,23,42,.65);border:1px solid var(--line);font-size:12px;color:var(--mute)}
+details.cfg-acc{padding:0;overflow:hidden;margin-bottom:10px}
+details.cfg-acc>summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13.5px;font-weight:800;user-select:none;touch-action:manipulation}
+details.cfg-acc>summary::-webkit-details-marker{display:none}
+details.cfg-acc>summary .acc-r{display:flex;align-items:center;gap:8px;min-width:0}
+details.cfg-acc>summary .acc-l{display:flex;align-items:center;gap:7px;flex:none}
+details.cfg-acc>summary .chev{color:var(--mute);transition:transform .2s;font-size:14px}
+details.cfg-acc[open]>summary{border-bottom:1px dashed var(--line)}
+details.cfg-acc[open]>summary .chev{transform:rotate(180deg);color:var(--accent)}
+.acc-bd{padding:12px 14px;display:grid;gap:10px}
+.wm-grid{display:grid;grid-template-columns:1fr;gap:7px}
+@media(min-width:720px){.wm-grid{grid-template-columns:repeat(3,1fr)}}
+.wm-opt{padding:9px 11px;border-radius:10px;border:1px solid var(--line);background:#091020;color:var(--text);text-align:right;cursor:pointer;font:inherit;display:flex;flex-direction:column;gap:3px}
+.wm-opt b{font-size:12.5px}.wm-opt span{font-size:11px;color:var(--mute);line-height:1.5}
+.wm-opt.on{border-color:var(--accent);background:#142854;box-shadow:0 0 0 1px rgba(108,155,255,.35)}
+.wl-chips{display:flex;flex-wrap:wrap;gap:6px;max-height:220px;overflow-y:auto;padding:8px;border-radius:10px;background:#091020;border:1px solid var(--line)}
+.wl-chip{padding:4px 9px;border-radius:999px;border:1px solid var(--line);background:#111a30;color:#dbe4fa;font:inherit;font-size:11.5px;cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.wl-chip.on{border-color:var(--up);background:#0b2a22;color:var(--up);font-weight:700}
 </style>
 </head>
 <body>
@@ -114,13 +151,26 @@ footer{text-align:center;font-size:11px;color:var(--mute);margin-top:14px;line-h
 <div id="boot-err"></div>
 
 <header>
-  <h1><span class="logo">GOLIX</span> <span class="h1s">ترمینال هوشمند نوسان‌گیری بورس ایران</span></h1>
+  <h1><span class="logo">GOLIX</span> <span class="h1s">ترمینال نوسان‌گیری بورس ایران</span></h1>
   <div class="conn">
-    <a class="btnx sm ib" href="https://online.ibtrader.ir/dashboard/stock/basic" target="golix_ibtrader" rel="noopener">📈 کارگزاری IBTrader</a>
+    <a class="ib-mini" href="https://online.ibtrader.ir/dashboard/stock/basic" target="golix_ibtrader" rel="noopener" title="باز کردن کارگزاری IBTrader">📈 IBTrader</a>
+    <button type="button" id="bellBtn" class="bell-btn" title="مرکز هشدارها">🔔<span id="bellCnt" class="bell-cnt">0</span></button>
     <span id="dot" class="dot"></span>
     <span id="status">در حال اتصال...</span>
   </div>
 </header>
+<div id="alertDrawer" class="al-ov" aria-hidden="true">
+  <div class="al-box">
+    <div class="al-hd">
+      <h3>🔔 مرکز هشدارها <span id="alCountLbl" class="chip">۰</span></h3>
+      <div style="display:flex;gap:6px">
+        <button type="button" id="alClrBtn" class="btnx sm warn">پاک‌کردن</button>
+        <button type="button" id="alCloseBtn" class="btnx sm">✕</button>
+      </div>
+    </div>
+    <div id="alList" class="al-list"><div class="sub">هنوز هشداری ثبت نشده است.</div></div>
+  </div>
+</div>
 
 <div id="demoBar" class="demo">⚠ حالت نمایشی (آزمایشی): داده‌ها ساختگی هستند و فقط برای تست ظاهر و موتورها خارج از ساعت بازارند.</div>
 
@@ -223,12 +273,54 @@ footer{text-align:center;font-size:11px;color:var(--mute);margin-top:14px;line-h
 
 <!-- ========== تب ۳: تنظیمات و اتصال سرور ========== -->
 <div class="tp" id="tp-cfg">
-  <div class="card">
-    <div class="ph"><h3>⚙ تنظیمات اتصال، سرمایه و کارمزد بورس</h3><span id="cfgStat" class="sub"></span></div>
-    <div style="display:grid;gap:10px">
-      <label class="f">آدرس Worker کلودفلر (نسخه GOLIX)
-        <input id="proxy" dir="ltr" placeholder="https://arvan.golijoon68.workers.dev">
-      </label>
+  <div class="cfg-bar">
+    <span>منوهای تنظیمات (کشویی)</span>
+    <div style="display:flex;gap:6px">
+      <button type="button" id="cfgOpenAll" class="btnx sm">باز کردن همه</button>
+      <button type="button" id="cfgCloseAll" class="btnx sm">بستن همه</button>
+    </div>
+  </div>
+
+  <details class="card cfg-acc" id="accWatch">
+    <summary>
+      <span class="acc-r">🎯 حالت اسکن و انتخاب سهام (دیده‌بان)</span>
+      <span class="acc-l"><span id="wmChip" class="chip up">اهرم و طلا + دیده‌بان</span><span class="chev">▾</span></span>
+    </summary>
+    <div class="acc-bd">
+      <div class="wm-grid" id="wmGrid">
+        <button type="button" class="wm-opt" data-wm="etf_watch">
+          <b>⚡ اهرم و طلا + دیده‌بان من (پیشنهادی)</b>
+          <span>صندوق‌های اهرمی و طلا همیشه رصد می‌شوند؛ از سهام عادی فقط تیک‌زده‌های تو.</span>
+        </button>
+        <button type="button" class="wm-opt" data-wm="watch">
+          <b>★ فقط دیده‌بان منتخب من</b>
+          <span>فقط نمادهایی که پایین تیک می‌زنی سیگنال و صدای هشدار می‌دهند.</span>
+        </button>
+        <button type="button" class="wm-opt" data-wm="all">
+          <b>🌐 کل بازار (فقط شکارهای قوی)</b>
+          <span>کل بازار رصد می‌شود؛ با فیلتر امتیاز سخت‌گیرانه‌تر برای جلوگیری از شلوغی.</span>
+        </button>
+      </div>
+      <div class="controls" style="margin:2px 0 0">
+        <input id="wlSearch" placeholder="جستجوی نماد برای تیک زدن (مثلاً فملی، فولاد، اهرم، عیار...)">
+      </div>
+      <div class="btnrow" style="margin:0">
+        <button type="button" id="wlAddLev" class="btnx sm">+ همه اهرمی‌ها</button>
+        <button type="button" id="wlAddGold" class="btnx sm">+ همه طلاها</button>
+        <button type="button" id="wlAddTop" class="btnx sm">+ ۲۰ سهم پرارزش</button>
+        <button type="button" id="wlClrAll" class="btnx sm warn">پاک‌کردن تیک‌ها</button>
+      </div>
+      <div id="wlInfo" class="sub" style="margin:0"></div>
+      <div id="wlBox" class="wl-chips"><div class="sub">در حال دریافت لیست نمادها...</div></div>
+    </div>
+  </details>
+
+  <details class="card cfg-acc" id="accCap">
+    <summary>
+      <span class="acc-r">💰 سرمایه، کارمزد و فیلتر امتیاز</span>
+      <span class="acc-l"><span id="capChip" class="chip">—</span><span class="chev">▾</span></span>
+    </summary>
+    <div class="acc-bd">
       <div class="calc">
         <label class="f">سرمایه کل (میلیون تومان)<input id="capital" type="number" inputmode="decimal"></label>
         <label class="f">ریسک هر معامله (٪ سرمایه)<input id="risk" type="number" inputmode="decimal" step="0.1"></label>
@@ -237,20 +329,44 @@ footer{text-align:center;font-size:11px;color:var(--mute);margin-top:14px;line-h
         <label class="f">حداقل ارزش معاملات (میلیارد تومان)<input id="minVal" type="number" inputmode="decimal"></label>
         <label class="f">حداقل امتیاز سیگنال معتبر<input id="minScore" type="number" inputmode="numeric"></label>
       </div>
+    </div>
+  </details>
+
+  <details class="card cfg-acc" id="accAlert">
+    <summary>
+      <span class="acc-r">🔔 صدا و مرکز هشدارها</span>
+      <span class="acc-l"><span id="sndChip" class="chip up">صدا روشن</span><span class="chev">▾</span></span>
+    </summary>
+    <div class="acc-bd">
+      <div class="sub" style="margin:0">هشدارها دیگر جلوی صفحه باز نمی‌شوند؛ صدای هشدار همیشه پخش می‌شود و جزئیات در آیکون زنگولهٔ بالا ذخیره می‌شود.</div>
+      <div class="btnrow" style="margin:0">
+        <button id="alertBtn" class="btnx">هشدار</button>
+        <button id="testBtn" class="btnx">🔔 تست صدا و ثبت در زنگوله</button>
+        <button type="button" id="openBellCfg" class="btnx">📋 مشاهده لیست هشدارها</button>
+      </div>
+    </div>
+  </details>
+
+  <details class="card cfg-acc" id="accConn">
+    <summary>
+      <span class="acc-r">🔌 اتصال سرور، حالت نمایشی و عیب‌یابی</span>
+      <span class="acc-l"><span id="cfgStat" class="sub" style="margin:0"></span><span class="chev">▾</span></span>
+    </summary>
+    <div class="acc-bd">
+      <label class="f">آدرس Worker کلودفلر (خالی = اتصال مستقیم ایران)
+        <input id="proxy" dir="ltr" placeholder="خالی بگذارید (اتصال مستقیم به TSETMC)">
+      </label>
       <label style="font-size:13px;display:flex;gap:8px;align-items:center">
         <input id="demo" type="checkbox"> حالت نمایشی (داده ساختگی برای تست ظاهر خارج از ساعت بورس)
       </label>
-      <div class="btnrow" style="margin-top:2px">
-        <button id="alertBtn" class="btnx">هشدار</button>
-        <button id="testBtn" class="btnx">🔔 تست صدا و اعلان</button>
+      <div class="btnrow" style="margin:0">
         <button id="retryBtn" class="btnx">🔄 دریافت دوباره</button>
         <button id="diagBtn" class="btnx">🩺 عیب‌یابی Worker و TSETMC</button>
       </div>
       <div id="diag" class="note" dir="auto"></div>
     </div>
-  </div>
+  </details>
 </div>
-
 <!-- ========== تب ۴: راهنما ========== -->
 <div class="tp" id="tp-guide">
   <div class="card gd">
@@ -294,15 +410,58 @@ const IB_URL='https://online.ibtrader.ir/dashboard/stock/basic';
 
 /* ---------- تنظیمات ---------- */
 const CFG=Object.assign(
-  {proxy:'',capital:100,risk:1,feeStock:1.25,feeEtf:0.24,minVal:4,minScore:68,alert:true,demo:false},
+  {proxy:'',capital:100,risk:1,feeStock:1.25,feeEtf:0.24,minVal:4,minScore:68,alert:true,demo:false,watchMode:'etf_watch'},
   (()=>{try{return JSON.parse(ls.get('gxcfg'))||{}}catch(e){return{}}})()
 );
+if(!['etf_watch','watch','all'].includes(CFG.watchMode))CFG.watchMode='etf_watch';
 const saveCfg=()=>ls.set('gxcfg',JSON.stringify(CFG));
+const wmLabel=m=>m==='watch'?'فقط دیده‌بان':m==='all'?'کل بازار (قوی)':'اهرم و طلا + دیده‌بان';
+function inScope(S){
+  if(CFG.watchMode==='all')return true;
+  if(CFG.watchMode==='watch')return pick.has(S.code);
+  return S.kind==='etf_lev'||S.kind==='etf_gold'||pick.has(S.code);
+}
+function updateCfgChips(){
+  const wm=$('wmChip'),cp=$('capChip'),sn=$('sndChip');
+  if(wm)wm.textContent=wmLabel(CFG.watchMode)+' ('+fa(pick.size)+' تیک)';
+  if(cp)cp.textContent=fa(CFG.capital)+' م.ت · امتیاز ≥'+fa(CFG.minScore);
+  if(sn){sn.textContent=CFG.alert?'صدا روشن':'صدا خاموش';sn.className='chip '+(CFG.alert?'up':'down');}
+  document.querySelectorAll('#wmGrid .wm-opt').forEach(b=>b.classList.toggle('on',b.dataset.wm===CFG.watchMode));
+}
+function renderWatchPicker(){
+  const box=$('wlBox'),info=$('wlInfo');
+  if(!box)return;
+  window.__wlInit=ST.length;
+  const q=normFa($('wlSearch')?.value||'');
+  const activeCnt=ST.filter(inScope).length;
+  if(info)info.textContent='تیک‌زده‌های تو: '+fa(pick.size)+' نماد · کل نمادهای فعال در این حالت: '+fa(activeCnt)+' از '+fa(ST.length);
+  if(!ST.length){box.innerHTML='<div class="sub">در حال دریافت لیست نمادها...</div>';return;}
+  let list=ST.slice();
+  if(q)list=list.filter(s=>s.sym.includes(q)||s.name.includes(q));
+  list.sort((a,b)=>{
+    const pa=pick.has(a.code)?2:(a.kind!=='stock'?1:0);
+    const pb=pick.has(b.code)?2:(b.kind!=='stock'?1:0);
+    if(pb!==pa)return pb-pa;
+    return b.val-a.val;
+  });
+  box.replaceChildren();
+  list.slice(0,90).forEach(s=>{
+    const on=pick.has(s.code);
+    const btn=mk('button','wl-chip'+(on?' on':''),(on?'✓ ':'+ ')+s.sym+(s.kind==='etf_lev'?' (اهرم)':s.kind==='etf_gold'?' (طلا)':''));
+    btn.type='button';
+    btn.addEventListener('click',()=>{
+      pick.has(s.code)?pick.delete(s.code):pick.add(s.code);
+      watchSave();renderWatchPicker();updateCfgChips();analyzeAll();ensureHist(s.code);
+    });
+    box.append(btn);
+  });
+  if(!list.length)box.append(mk('div','sub','نمادی پیدا نشد.'));
+}
 ['proxy','capital','risk','feeStock','feeEtf','minVal','minScore'].forEach(k=>{
   const el=$(k);el.value=CFG[k];
   el.addEventListener('change',()=>{
     CFG[k]=k==='proxy'?el.value.trim():(parseFloat(el.value)||CFG[k]);
-    saveCfg();
+    saveCfg();updateCfgChips();
     if(k==='proxy')refresh(true);else analyzeAll();
   });
 });
@@ -312,6 +471,19 @@ $('demo').addEventListener('change',e=>{
   ST=[];HIST={};RES=[];TICKS={};CONFIRM={};
   refresh(true);
 });
+$('wmGrid')?.addEventListener('click',e=>{
+  const b=e.target.closest('.wm-opt');if(!b)return;
+  CFG.watchMode=b.dataset.wm;saveCfg();updateCfgChips();renderWatchPicker();analyzeAll();
+});
+$('wlSearch')?.addEventListener('input',renderWatchPicker);
+$('wlAddLev')?.addEventListener('click',()=>{ST.filter(s=>s.kind==='etf_lev').forEach(s=>pick.add(s.code));watchSave();renderWatchPicker();updateCfgChips();analyzeAll();});
+$('wlAddGold')?.addEventListener('click',()=>{ST.filter(s=>s.kind==='etf_gold').forEach(s=>pick.add(s.code));watchSave();renderWatchPicker();updateCfgChips();analyzeAll();});
+$('wlAddTop')?.addEventListener('click',()=>{ST.filter(s=>s.kind==='stock').sort((a,b)=>b.val-a.val).slice(0,20).forEach(s=>pick.add(s.code));watchSave();renderWatchPicker();updateCfgChips();analyzeAll();});
+$('wlClrAll')?.addEventListener('click',()=>{pick.clear();watchSave();renderWatchPicker();updateCfgChips();analyzeAll();});
+$('accWatch')?.addEventListener('toggle',()=>{if($('accWatch').open)renderWatchPicker();});
+$('cfgOpenAll')?.addEventListener('click',()=>document.querySelectorAll('#tp-cfg details.cfg-acc').forEach(d=>d.open=true));
+$('cfgCloseAll')?.addEventListener('click',()=>document.querySelectorAll('#tp-cfg details.cfg-acc').forEach(d=>d.open=false));
+setTimeout(()=>{updateCfgChips();renderWatchPicker();},0);
 
 /* ---------- انتقال یک‌کلیکی به IBTrader ---------- */
 function openIB(sym){
@@ -879,22 +1051,34 @@ async function loadHistories(){
 
 function analyzeAll(){
   const ms=marketState(),rk=riskState();
-  RES=ST.map(s=>analyze(s,rk));
+  const strictAll=CFG.watchMode==='all';
+  const minSc=strictAll?Math.min(88,CFG.minScore+6):CFG.minScore;
+  RES=ST.map(s=>{
+    const r=analyze(s,rk);
+    r.inScope=inScope(s);
+    if(strictAll){
+      if(r.tapeValid&&(r.tapeScore<minSc||(s.kind==='stock'&&s.val<CFG.minVal*1.5*BTOMAN)))r.tapeValid=false;
+      if(r.swingValid&&(r.swingScore<minSc||(s.kind==='stock'&&s.val<CFG.minVal*1.5*BTOMAN)))r.swingValid=false;
+      r.golden=r.swingValid&&r.tapeValid;
+      if(r.sellValid&&r.sellScore<minSc)r.sellValid=false;
+    }
+    return r;
+  });
   RES.sort((a,b)=>{
     const pa=a.golden?5:a.swingValid?4:a.tapeValid?3:a.sellValid?2:a.tabloOnly?0:1;
     const pb=b.golden?5:b.swingValid?4:b.tapeValid?3:b.sellValid?2:b.tabloOnly?0:1;
     if(pb!==pa)return pb-pa;
     return Math.max(b.swingScore,b.tapeScore)-Math.max(a.swingScore,a.tapeScore);
   });
-
   const day=tehran().ymd;
   RES.forEach(r=>{
+    if(!r.inScope)return;
     const sigKind=r.golden?'gold':r.swingValid?'swing':r.tapeValid?'tape':r.sellValid?'sell':null;
     if(!sigKind){delete CONFIRM[r.S.code];return}
     const prev=CONFIRM[r.S.code],cnt=(prev&&prev.k===sigKind)?prev.c+1:1;
     CONFIRM[r.S.code]={k:sigKind,c:cnt};
     const sc=sigKind==='tape'?r.tapeScore:sigKind==='sell'?r.sellScore:r.swingScore;
-    if(!(CFG.demo||ms.k!=='open'||cnt>=2||sc>=CFG.minScore+8))return;
+    if(!(CFG.demo||ms.k!=='open'||cnt>=2||sc>=minSc+8))return;
     const key='al:'+sigKind+':'+r.S.code+':'+day;
     if(AL.seen.has(key))return;
     AL.seen.add(key);
@@ -902,15 +1086,21 @@ function analyzeAll(){
     if((sigKind==='gold'||sigKind==='swing')&&r.plan)logSignal(r,sigKind);
     if(sigKind==='sell')checkSellExit(r);
   });
-
+  updateCfgChips();
+  if($('accWatch')?.open||window.__wlInit!==ST.length)renderWatchPicker();
   renderSignals();renderTable();renderDetail();renderRisk();
 }
 
-/* ---------- سیستم هشدار ---------- */
-const AL={ctx:null,seen:new Set(),on:CFG.alert};
+/* ---------- سیستم هشدار (صدا همیشه فعال + ثبت در زنگوله بدون پاپ‌آپ مزاحم) ---------- */
+const AL={ctx:null,seen:new Set(),on:CFG.alert,lastBeep:0};
+let AL_HIST=(()=>{try{return JSON.parse(ls.get('gxalerts'))||[]}catch(e){return[]}})();
+const saveAlerts=()=>ls.set('gxalerts',JSON.stringify(AL_HIST.slice(0,50)));
 function audioCtx(){try{AL.ctx=AL.ctx||new(window.AudioContext||window.webkitAudioContext)();if(AL.ctx.state==='suspended')AL.ctx.resume();return AL.ctx}catch(e){return null}}
 ['pointerdown','touchstart','keydown'].forEach(ev=>window.addEventListener(ev,()=>audioCtx(),{once:true,passive:true}));
-function beep(kind){
+function beep(kind,force){
+  const now=Date.now();
+  if(!force&&now-AL.lastBeep<2800)return;
+  AL.lastBeep=now;
   const c=audioCtx();if(!c)return;
   const seq=kind==='bad'?[[380,0],[260,.24]]:kind==='gold'?[[880,0],[1175,.18],[1568,.36],[1760,.54]]:[[880,0],[1318,.22]];
   seq.forEach(([f,d])=>{try{const o=c.createOscillator(),g=c.createGain();o.type='sine';o.frequency.value=f;const t=c.currentTime+d;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(.32,t+.02);g.gain.exponentialRampToValueAtTime(.001,t+.22);o.connect(g);g.connect(c.destination);o.start(t);o.stop(t+.24)}catch(e){}});
@@ -919,21 +1109,47 @@ function toast(title,body,cls,autoHide){
   let box=$('toasts');if(!box){box=mk('div','');box.id='toasts';document.body.appendChild(box)}
   const t=mk('div','toast '+(cls||''));t.append(mk('b','',title),mk('span','',body));
   const x=mk('button','x','✕');x.addEventListener('click',e=>{e.stopPropagation();t.remove()});t.append(x);
-  box.prepend(t);while(box.children.length>6)box.lastChild.remove();
-  if(autoHide)setTimeout(()=>t.remove(),4000);
+  box.prepend(t);while(box.children.length>3)box.lastChild.remove();
+  if(autoHide)setTimeout(()=>t.remove(),2500);
 }
-function alertNow(title,body,cls,kind){
-  if(!AL.on)return;
-  beep(kind);try{navigator.vibrate&&navigator.vibrate([220,90,280])}catch(e){}
-  toast(title,body,cls,false);
-  try{if(typeof Notification!=='undefined'&&Notification.permission==='granted')new Notification(title,{body,dir:'rtl',lang:'fa'})}catch(e){}
+function renderBell(){
+  const unread=AL_HIST.filter(x=>!x.read).length;
+  const cnt=$('bellCnt'),lbl=$('alCountLbl'),list=$('alList');
+  if(cnt){cnt.textContent=unread>99?'99+':fa(unread);cnt.classList.toggle('on',unread>0);}
+  if(lbl)lbl.textContent=fa(AL_HIST.length)+' مورد';
+  if(!list)return;
+  if(!AL_HIST.length){list.innerHTML='<div class="sub">هنوز هشداری ثبت نشده است.</div>';return;}
+  list.replaceChildren();
+  AL_HIST.forEach(it=>{
+    const card=mk('div','al-item '+(it.cls||'')+(it.read?'':' unread'));
+    const top=mk('div','al-top');
+    top.append(mk('b','',it.title),mk('span','sub',it.time||''));
+    card.append(top,mk('div','al-body',it.body||''));
+    if(it.code)card.addEventListener('click',()=>{closeAlerts();goDetail(it.code);});
+    list.append(card);
+  });
+}
+function openAlerts(){AL_HIST.forEach(x=>x.read=true);saveAlerts();renderBell();$('alertDrawer')?.classList.add('on');}
+function closeAlerts(){$('alertDrawer')?.classList.remove('on');}
+$('bellBtn')?.addEventListener('click',openAlerts);
+$('openBellCfg')?.addEventListener('click',openAlerts);
+$('alCloseBtn')?.addEventListener('click',closeAlerts);
+$('alertDrawer')?.addEventListener('click',e=>{if(e.target===$('alertDrawer'))closeAlerts();});
+$('alClrBtn')?.addEventListener('click',()=>{AL_HIST=[];saveAlerts();renderBell();});
+function alertNow(title,body,cls,kind,code,sym,forceBeep){
+  AL_HIST.unshift({id:Date.now()+Math.random(),time:tmT(),title,body,cls:cls||'',kind:kind||'ok',code:code||'',sym:sym||'',read:false});
+  AL_HIST=AL_HIST.slice(0,50);saveAlerts();renderBell();
+  const bb=$('bellBtn');if(bb){bb.classList.remove('ring');void bb.offsetWidth;bb.classList.add('ring');}
+  if(!AL.on&&!forceBeep)return;
+  beep(kind,forceBeep);
+  try{navigator.vibrate&&navigator.vibrate([180,80,220])}catch(e){}
 }
 function fireAlert(r,k){
   const s=r.S,p=r.plan;
-  if(k==='gold'&&p)alertNow('🌟 پیشنهاد طلایی GOLIX · '+s.sym,'هم‌جهتی تابلوخوانی ('+fa(r.tapeScore)+') و سوئینگ ('+fa(r.swingScore)+')\nورود '+fa(p.entry)+' | SL '+fa(p.sl)+' | TP1 '+fa(p.tp1)+' | RR '+fa(p.rr2,2),'gold','gold');
-  else if(k==='swing'&&p)alertNow('🧠 سوئینگ معتبر · '+s.sym,'امتیاز '+fa(r.swingScore)+' | ورود '+fa(p.entry)+' | SL '+fa(p.sl)+' | TP1 '+fa(p.tp1)+' | حجم '+fa(p.shares),'long','ok');
-  else if(k==='tape')alertNow('⚡ شکار تابلوخوانی · '+s.sym,'امتیاز '+fa(r.tapeScore)+' | قیمت '+fa(s.last)+' ('+pct(s.pct)+') | قدرت '+fa(r.F?r.F.power:0,2),'long','ok');
-  else if(k==='sell')alertNow('🚨 هشدار خروج / فروش · '+s.sym,'شدت فروش '+fa(r.sellScore)+' | قیمت '+fa(s.last)+' ('+pct(s.pct)+')','short','bad');
+  if(k==='gold'&&p)alertNow('🌟 پیشنهاد طلایی · '+s.sym,'تابلو '+fa(r.tapeScore)+' | سوئینگ '+fa(r.swingScore)+'\nورود '+fa(p.entry)+' | SL '+fa(p.sl)+' | TP1 '+fa(p.tp1)+' | RR '+fa(p.rr2,2),'gold','gold',s.code,s.sym);
+  else if(k==='swing'&&p)alertNow('🧠 سوئینگ معتبر · '+s.sym,'امتیاز '+fa(r.swingScore)+' | ورود '+fa(p.entry)+' | SL '+fa(p.sl)+' | TP1 '+fa(p.tp1)+' | حجم '+fa(p.shares),'long','ok',s.code,s.sym);
+  else if(k==='tape')alertNow('⚡ نوسان‌گیری لحظه‌ای · '+s.sym,'امتیاز '+fa(r.tapeScore)+' | قیمت '+fa(s.last)+' ('+pct(s.pct)+') | قدرت '+fa(r.F?r.F.power:0,2),'long','ok',s.code,s.sym);
+  else if(k==='sell')alertNow('🚨 هشدار خروج · '+s.sym,'شدت فروش '+fa(r.sellScore)+' | قیمت '+fa(s.last)+' ('+pct(s.pct)+')','short','bad',s.code,s.sym);
 }
 const prevQ={};
 function watchQueues(){
@@ -941,15 +1157,14 @@ function watchQueues(){
     if(!pick.has(s.code))return;
     const st=s.buyQ?'B':s.sellQ?'S':'',was=prevQ[s.code];prevQ[s.code]=st;
     if(was===undefined||was===st)return;
-    if(was==='S'&&st==='')alertNow('⚡ '+s.sym+': صف فروش جمع شد!','قیمت '+fa(s.last)+' ('+pct(s.pct)+')','long','ok');
-    if(was==='B'&&st==='')alertNow('⚠ '+s.sym+': صف خرید عرضه شد!','قیمت '+fa(s.last)+' ('+pct(s.pct)+')','short','bad');
+    if(was==='S'&&st==='')alertNow('⚡ '+s.sym+': صف فروش جمع شد!','قیمت '+fa(s.last)+' ('+pct(s.pct)+')','long','ok',s.code,s.sym);
+    if(was==='B'&&st==='')alertNow('⚠ '+s.sym+': صف خرید عرضه شد!','قیمت '+fa(s.last)+' ('+pct(s.pct)+')','short','bad',s.code,s.sym);
   });
 }
-function alertLabel(){$('alertBtn').textContent='هشدار صوتی و اعلان: '+(AL.on?'روشن':'خاموش')}
-$('alertBtn').addEventListener('click',()=>{AL.on=!AL.on;CFG.alert=AL.on;saveCfg();alertLabel();if(AL.on){audioCtx();beep('ok');try{Notification&&Notification.permission==='default'&&Notification.requestPermission()}catch(e){}}});
-$('testBtn').addEventListener('click',()=>{audioCtx();const w=AL.on;AL.on=true;alertNow('🔔 تست GOLIX','سیستم صوتی و هشدار ترمینال بورس فعال است','gold','gold');AL.on=w});
-alertLabel();
-
+function alertLabel(){$('alertBtn').textContent='صدای هشدار: '+(AL.on?'روشن 🔊':'خاموش 🔇');updateCfgChips();}
+$('alertBtn').addEventListener('click',()=>{AL.on=!AL.on;CFG.alert=AL.on;saveCfg();alertLabel();if(AL.on){audioCtx();beep('ok',true);}});
+$('testBtn').addEventListener('click',()=>{audioCtx();alertNow('🔔 تست GOLIX','صدا پخش شد و این هشدار بدون مزاحمت داخل زنگولهٔ بالا ثبت شد.','gold','gold','','',true);});
+alertLabel();renderBell();
 /* ---------- دفترچه سیگنال و ارزیابی خودکار ---------- */
 function logSignal(r,src){
   if(JR.some(e=>e.code===r.S.code&&e.status==='open'))return;
